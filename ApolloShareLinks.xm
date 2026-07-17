@@ -58,4 +58,28 @@ static NSString *NormalizeShareURLCacheKey(NSString *urlString) {
     }
     // Only normalize reddit share URLs
     NSRange range = [urlString rangeOfString:@"://www.reddit.com/"];
-    if (range.location != NSNotFound)
+    if (range.location != NSNotFound) {
+        return [urlString stringByReplacingCharactersInRange:range withString:@"://reddit.com/"];
+    }
+    range = [urlString rangeOfString:@"://new.reddit.com/"];
+    if (range.location != NSNotFound) {
+        return [urlString stringByReplacingCharactersInRange:range withString:@"://reddit.com/"];
+    }
+    range = [urlString rangeOfString:@"://np.reddit.com/"];
+    if (range.location != NSNotFound) {
+        return [urlString stringByReplacingCharactersInRange:range withString:@"://reddit.com/"];
+    }
+    return urlString;
+}
+
+%ctor {
+    cache = [NSCache new];
+
+    NSError *error = NULL;
+    ShareLinkRegex = [NSRegularExpression regularExpressionWithPattern:ShareLinkRegexPattern options:NSRegularExpressionCaseInsensitive error:&error];
+    MediaShareLinkRegex = [NSRegularExpression regularExpressionWithPattern:MediaShareLinkPattern options:NSRegularExpressionCaseInsensitive error:&error];
+    ImgurTitleIdImageLinkRegex = [NSRegularExpression regularExpressionWithPattern:ImgurTitleIdImageLinkPattern options:NSRegularExpressionCaseInsensitive error:&error];
+    HTMLHrefRegex = [NSRegularExpression regularExpressionWithPattern:HTMLHrefRegexPattern options:NSRegularExpressionCaseInsensitive error:&error];
+
+    %init;
+}
